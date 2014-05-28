@@ -71,6 +71,35 @@ import org.bukkit.plugin.java.JavaPlugin;
         				if (args.length == 2)
         				{
         					sender.sendMessage("[UUIDSql]The name of "+args[1].toString()+" is Ringotter");
+        					
+        					Connection dbCon = null;
+        				    Statement stmt = null;
+        				    ResultSet rs = null;
+        					
+        					try { 
+        						
+        						String query = "SELECT COUNT(*) AS exist, username FROM userUUID WHERE uuid = '"+args[1].toString()+"' ";
+        						dbCon = DriverManager.getConnection(dbInformation[0], dbInformation[1], dbInformation[2]);
+        						        								
+        						stmt = dbCon.prepareStatement(query);
+        						rs = stmt.executeQuery(query);
+        						while(rs.next()){
+        							int count = rs.getInt(1);
+        							if (count != 0)
+        							{
+        	        					sender.sendMessage("[UUIDSql]The username of uuid "+args[1].toString()+" is "+rs.getString(2)+"");
+        							}
+        							else
+        							{
+        								sender.sendMessage("This uuid was not found in the database");
+        							}
+        						}        				
+        						dbCon.close();
+        					} catch (SQLException e) {
+        						// TODO Auto-generated catch block
+        						this.getLogger().warning("an error occured while connecting to the db, please change the config file."+e.getMessage());
+        					}
+        					
         				}
         				else
         				{
@@ -97,6 +126,10 @@ import org.bukkit.plugin.java.JavaPlugin;
         							if (count != 0)
         							{
         	        					sender.sendMessage("[UUIDSql]The UUID of "+args[1].toString()+" is "+rs.getString(2)+"");
+        							}
+        							else
+        							{
+        								sender.sendMessage("This player was not found in the database");
         							}
         						}        				
         						dbCon.close();
