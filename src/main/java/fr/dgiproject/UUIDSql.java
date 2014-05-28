@@ -63,33 +63,33 @@ import org.bukkit.plugin.java.JavaPlugin;
         		{
         			if (args[0].equalsIgnoreCase("name"))
         			{
-        				if (args[1].toString() != null)
+        				if (args.length == 2)
         				{
-        					sender.sendMessage("the name of "+args[1].toString()+" is Ringotter");
+        					sender.sendMessage("[UUIDSql]The name of "+args[1].toString()+" is Ringotter");
         				}
         				else
         				{
-        					sender.sendMessage("You must specify a uuid");
+        					sender.sendMessage("[UUIDSql]You must specify a uuid");
         				}
         			}
         			else if (args[0].equalsIgnoreCase("uuid")) 
         			{        				
-        				if (args[1].toString() != null)
+        				if (args.length == 2)
         				{
-        					sender.sendMessage("the UUID of "+args[1].toString()+" is 589-s6d3");
+        					sender.sendMessage("[UUIDSql]The UUID of "+args[1].toString()+" is 589-s6d3");
         				}
         				else
         				{
-        					sender.sendMessage("You must specify a name");
+        					sender.sendMessage("[UUIDSql]You must specify a name");
         				}
 					}
         			else if (args[0].equalsIgnoreCase("reload"))
         			{
-        				sender.sendMessage("reloading UUIDSql");
+        				sender.sendMessage("[UUIDSql]Reloading UUIDSql");
         			}
         			else
         			{
-        				sender.sendMessage("There is a problem, this command doen't exist !");
+        				sender.sendMessage("[UUIDSql]There is a problem, this command doen't exist !");
         			}
         		}
         		else
