@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -24,6 +25,9 @@ public final class UUIDSql extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 
 		File config = new File(getDataFolder() + File.separator + "config.yml");
+                
+                
+                
 
 		if (!config.exists()) {
 			getLogger().info("Creating configs file !");
@@ -43,17 +47,24 @@ public final class UUIDSql extends JavaPlugin {
 			dbInformation[0] = dbURL;
 			dbInformation[1] = username;
 			dbInformation[2] = password;
+                        Connection dbCon = null;
+                        try {
+                            dbCon = DriverManager.getConnection(dbInformation[0], dbInformation[1], dbInformation[2]);
+                            createTables(dbCon, this);
+                        } catch (SQLException e){
+                            this.getLogger().warning("An error occured while connecting to the db, please change the config file."+e.getMessage());
+                        }
 
 		}
 
 		pm.registerEvents(playerListener, this);
-		getLogger().info("Loaded !");
+		getLogger().info("[UUIDSql] Loaded !");
 
 	}
 
 	@Override
 	public void onDisable() {
-		getLogger().info("Unloaded");
+		getLogger().info("[UUIDSql] Unloaded");
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd,
@@ -163,5 +174,24 @@ public final class UUIDSql extends JavaPlugin {
 		return false;
 
 	}
+        private static void createTables(Connection connection, Plugin plugin) {
+		
+		Statement statement;
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS `userUUID` ("+
+                                                "`id` int(11) NOT NULL AUTO_INCREMENT,"+
+                                                "`uuid` text NOT NULL,"+
+                                                "`username` text NOT NULL,"+
+                                                "PRIMARY KEY (`id`)"+
+                                                ") ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;");
+			plugin.getLogger().info("[UUIDSql] MySQL table has been created");
+		} catch (SQLException e) {
+			plugin.getLogger().severe("[UUIDSql]An error occured while creating MySQL table, please change the config file");
+			plugin.getLogger().severe("Cause: " + e.getMessage());
+		}
+		
+	}
+
 
 }
