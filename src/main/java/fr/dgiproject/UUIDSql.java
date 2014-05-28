@@ -7,14 +7,14 @@ import org.bukkit.plugin.java.JavaPlugin;
      
     public final class UUIDSql extends JavaPlugin {
     	
-        private final PlayerListener playerListener = new PlayerListener(this);
+    	String[] dbInformation = new String[3];
+        private final PlayerListener playerListener = new PlayerListener(this,dbInformation);
         @Override
         public void onEnable() {
 
+        	
         	PluginManager pm = getServer().getPluginManager();
-            pm.registerEvents(playerListener, this);
-                        
-            
+
             File config = new File(getDataFolder() + File.separator + "config.yml");
             
             if (!config.exists())
@@ -27,8 +27,20 @@ import org.bukkit.plugin.java.JavaPlugin;
             	this.getConfig().options().copyDefaults(true);
             	this.saveConfig();
 
-            }           
+            }
+            else
+            {
+            	String dbURL = this.getConfig().getString("host")+this.getConfig().getString("dbName");
+                String username = this.getConfig().getString("Username");
+                String password = this.getConfig().getString("Password");
+                
+                dbInformation[0] = dbURL;
+                dbInformation[1] = username;
+                dbInformation[2] = password;
+
+            }
             
+            pm.registerEvents(playerListener, this);
         	getLogger().info("Loaded !");   		
     		
         }

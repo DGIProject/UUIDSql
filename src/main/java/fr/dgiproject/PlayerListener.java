@@ -16,9 +16,11 @@ public class PlayerListener implements Listener {
     Connection dbCon = null;
     Statement stmt = null;
     ResultSet rs = null;
+    String[] dbInformation = new String[3];
 	
-	public PlayerListener(UUIDSql instance) {
+	public PlayerListener(UUIDSql instance, String[] dbInfo) {
         plugin = instance;
+        dbInformation = dbInfo;
     }
 	
 	@EventHandler
@@ -26,15 +28,10 @@ public class PlayerListener implements Listener {
 		
 		Player player = event.getPlayer();
     	plugin.getLogger().info("New player "+event.getPlayer().getName()+ " uuid: "+event.getPlayer().getUniqueId());
-    	    	
-    	String dbURL = plugin.getConfig().getString("host")+plugin.getConfig().getString("dbName");
-        String username = plugin.getConfig().getString("Username");
-        String password = plugin.getConfig().getString("Password");
-
-        	
+ 	
         	String query = "SELECT COUNT(*) FROM userUUID WHERE uuid = '"+player.getUniqueId().toString()+"' OR username = '"+player.getName().toString()+"'";
         	try {
-        		dbCon = DriverManager.getConnection(dbURL, username, password);
+        		dbCon = DriverManager.getConnection(dbInformation[0], dbInformation[1], dbInformation[2]);
 				stmt = dbCon.prepareStatement(query);
 				rs = stmt.executeQuery(query);
 				while(rs.next()){
@@ -69,10 +66,13 @@ public class PlayerListener implements Listener {
 						
 					}
 				}
+				dbCon.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				plugin.getLogger().warning("an error occured while connecting to the db, please change the config file."+e.getMessage());
 			}
+        	
+        	
            
 
 	}
