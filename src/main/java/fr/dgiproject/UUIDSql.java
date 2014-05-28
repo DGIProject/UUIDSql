@@ -1,6 +1,11 @@
 package fr.dgiproject;
      
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -75,8 +80,30 @@ import org.bukkit.plugin.java.JavaPlugin;
         			else if (args[0].equalsIgnoreCase("uuid")) 
         			{        				
         				if (args.length == 2)
-        				{
-        					sender.sendMessage("[UUIDSql]The UUID of "+args[1].toString()+" is 589-s6d3");
+        				{        				 	
+        					Connection dbCon = null;
+        				    Statement stmt = null;
+        				    ResultSet rs = null;
+        					
+        					try { 
+        						
+        						String query = "SELECT COUNT(*) AS exist, uuid FROM userUUID WHERE username = '"+args[1].toString()+"' ";
+        						dbCon = DriverManager.getConnection(dbInformation[0], dbInformation[1], dbInformation[2]);
+        						        								
+        						stmt = dbCon.prepareStatement(query);
+        						rs = stmt.executeQuery(query);
+        						while(rs.next()){
+        							int count = rs.getInt(1);
+        							if (count != 0)
+        							{
+        	        					sender.sendMessage("[UUIDSql]The UUID of "+args[1].toString()+" is "+rs.getString(2)+"");
+        							}
+        						}        				
+        						dbCon.close();
+        					} catch (SQLException e) {
+        						// TODO Auto-generated catch block
+        						this.getLogger().warning("an error occured while connecting to the db, please change the config file."+e.getMessage());
+        					}
         				}
         				else
         				{
@@ -86,6 +113,18 @@ import org.bukkit.plugin.java.JavaPlugin;
         			else if (args[0].equalsIgnoreCase("reload"))
         			{
         				sender.sendMessage("[UUIDSql]Reloading UUIDSql");
+        				
+        				String dbURL = this.getConfig().getString("host")+this.getConfig().getString("dbName");
+                        String username = this.getConfig().getString("Username");
+                        String password = this.getConfig().getString("Password");
+                        
+                        dbInformation[0] = dbURL;
+                        dbInformation[1] = username;
+                        dbInformation[2] = password;
+                        
+                        sender.sendMessage("[UUIDSql]Reload Ended !");
+        				
+        				
         			}
         			else
         			{
