@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -160,51 +159,182 @@ public final class UUIDSql extends JavaPlugin {
 				}
 				else if (args[0].equalsIgnoreCase("purge"))
 				{
-					Connection dbCon = null;
-					Statement stmt = null;
-
-					try {
-						String query = "TRUNCATE userUUID";
-						dbCon = DriverManager.getConnection(
-								dbInformation[0], dbInformation[1],
-								dbInformation[2]);
-
-						stmt = dbCon.prepareStatement(query);
-						stmt.executeUpdate(query);
+					if (args.length == 2)
+					{
 						
-						sender.sendMessage("[UUIDSql]dataBase is now empty !");
+						if (args[1].equalsIgnoreCase("1"))
+						{
+							Connection dbCon = null;
+							Statement stmt = null;
+		
+							try {
+								String query = "TRUNCATE userUUID";
+								dbCon = DriverManager.getConnection(
+										dbInformation[0], dbInformation[1],
+										dbInformation[2]);
+		
+								stmt = dbCon.prepareStatement(query);
+								stmt.executeUpdate(query);
+								
+								sender.sendMessage("[UUIDSql]dataBase is now empty !");
+								
+								dbCon.close();
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								this.getLogger().warning("[UUIDSql]An error occured .");
+								this.getLogger().severe("Cause: " + e.getMessage());
+		
+							}
+						}
+						else if(args[1].equalsIgnoreCase("2"))
+						{
+							try{      
+						         File f = new File("world"+File.separator+"playerdata");
+						         this.getLogger().info("world"+File.separator+"playerdata");
+						         String[] paths = f.list();
+						         for(String path:paths)
+						         {
+						        	 File tmp = new File("world"+File.separator+"playerdata"+File.separator+path);
+						        	 tmp.delete();
+						         }
+						      }catch(Exception e){
+						         e.printStackTrace();
+						      }
+							sender.sendMessage("[UUIDSql] User data were succesfully deleted");
+							
+						}
+						else if (args[1].equalsIgnoreCase("3")) // Tabe & userlib
+						{
+							Connection dbCon = null;
+							Statement stmt = null;
+		
+							try {
+								String query = "TRUNCATE userUUID";
+								dbCon = DriverManager.getConnection(
+										dbInformation[0], dbInformation[1],
+										dbInformation[2]);
+		
+								stmt = dbCon.prepareStatement(query);
+								stmt.executeUpdate(query);
+								
+								sender.sendMessage("[UUIDSql]dataBase is now empty !");
+								
+								dbCon.close();
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								this.getLogger().warning("[UUIDSql]An error occured .");
+								this.getLogger().severe("Cause: " + e.getMessage());
+		
+							}
+							
+							try{      
+						         File f = new File("world"+File.separator+"playerdata");
+						         this.getLogger().info("world"+File.separator+"playerdata");
+						         String[] paths = f.list();
+						         for(String path:paths)
+						         {
+						        	 File tmp = new File("world"+File.separator+"playerdata"+File.separator+path);
+						        	 tmp.delete();
+						         }
+						      }catch(Exception e){
+						         e.printStackTrace();
+						      }
+							sender.sendMessage("[UUIDSql] User data were succesfully deleted");
+							
+						}
 						
-						dbCon.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						this.getLogger().warning("[UUIDSql]An error occured .");
-						this.getLogger().severe("Cause: " + e.getMessage());
+					}					
+					else {
+						sender.sendMessage("[UUIDSql] What do you wan't to purge ?");
+						sender.sendMessage("[UUIDSql] 1. Table");
+						sender.sendMessage("[UUIDSql] 2. User Library");
+						sender.sendMessage("[UUIDSql] 3. Table & User Library");
+						sender.sendMessage("[UUIDSql] To perform the action, type : /uuidsql purge <1,2,3>");
 
 					}
+					
 				}
 				else if (args[0].equalsIgnoreCase("removeUuid"))
 				{
-					if (args.length == 2)
+					if (args.length >= 2)
 					{
-						Connection dbCon = null;
-						Statement stmt = null;
+						if (args.length == 3)
+						{
+							
+							if (args[2].equalsIgnoreCase("1"))
+							{
+								Connection dbCon = null;
+								Statement stmt = null;
 
-						try {
-							String query = "DELETE FROM userUUID WHERE uuid = '"+args[1].toString()+"'";
-							dbCon = DriverManager.getConnection(
-									dbInformation[0], dbInformation[1],
-									dbInformation[2]);
+								try {
+									String query = "DELETE FROM userUUID WHERE uuid = '"+args[1].toString()+"'";
+									dbCon = DriverManager.getConnection(
+											dbInformation[0], dbInformation[1],
+											dbInformation[2]);
 
-							stmt = dbCon.prepareStatement(query);
-							stmt.executeUpdate(query);
-							sender.sendMessage("[UUIDSql]Row deleted !");
-							dbCon.close();
-						} catch (SQLException e) {
-							// TODO Auto-generated catch block
-							this.getLogger().warning("[UUIDSql]An error occured .");
-							this.getLogger().severe("Cause: " + e.getMessage());
+									stmt = dbCon.prepareStatement(query);
+									stmt.executeUpdate(query);
+									sender.sendMessage("[UUIDSql]Row deleted !");
+									dbCon.close();
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									this.getLogger().warning("[UUIDSql]An error occured .");
+									this.getLogger().severe("Cause: " + e.getMessage());
+
+								}
+							}
+							else if(args[2].equalsIgnoreCase("2"))
+							{
+								File f = new File("world"+File.separator+"playerdata"+File.separator+args[1].toString()+".dat");
+								if (f.delete())
+									{
+										sender.sendMessage("[UUIDSql] File for "+args[1].toString()+" has been deleted");
+									}
+								else {
+									sender.sendMessage("[UUIDSql] An error occured");
+								}
+							}
+							else if (args[2].equalsIgnoreCase("3")) // Tabe & userlib
+							{
+								Connection dbCon = null;
+								Statement stmt = null;
+
+								try {
+									String query = "DELETE FROM userUUID WHERE uuid = '"+args[1].toString()+"'";
+									dbCon = DriverManager.getConnection(
+											dbInformation[0], dbInformation[1],
+											dbInformation[2]);
+
+									stmt = dbCon.prepareStatement(query);
+									stmt.executeUpdate(query);
+									sender.sendMessage("[UUIDSql]Row deleted !");
+									dbCon.close();
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									this.getLogger().warning("[UUIDSql]An error occured .");
+									this.getLogger().severe("Cause: " + e.getMessage());
+
+								}
+								File f = new File("world"+File.separator+"playerdata"+File.separator+args[1].toString()+".dat");
+								if (f.delete())
+									{
+										sender.sendMessage("[UUIDSql] File for "+args[1].toString()+" has been deleted");
+									}
+								else {
+									sender.sendMessage("[UUIDSql] An error occured");
+								}
+							}
+							
+						}					
+						else {
+							sender.sendMessage("[UUIDSql] What do you wan't to remove for "+args[1].toString()+" ?");
+							sender.sendMessage("[UUIDSql] 1. Table");
+							sender.sendMessage("[UUIDSql] 2. User Library");
+							sender.sendMessage("[UUIDSql] 3. Table & User Library");
+							sender.sendMessage("[UUIDSql] To perform the action, type : /uuidsql removeUuid "+args[1].toString()+" <1,2,3>");
 
 						}
+						
 					}
 					else {
 						sender.sendMessage("[UUIDSql]You myst secify a uuid !");
@@ -214,6 +344,7 @@ public final class UUIDSql extends JavaPlugin {
 				{
 					if (args.length == 2)
 					{
+						
 						Connection dbCon = null;
 						Statement stmt = null;
 
@@ -265,6 +396,7 @@ public final class UUIDSql extends JavaPlugin {
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS `userUUID` ("+
                                                 "`id` int(11) NOT NULL AUTO_INCREMENT,"+
                                                 "`uuid` text NOT NULL,"+
+                                                "`old_uuid` text NOT NULL,"+
                                                 "`username` text NOT NULL,"+
                                                 "PRIMARY KEY (`id`)"+
                                                 ") ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;");
