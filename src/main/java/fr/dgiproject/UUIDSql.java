@@ -52,7 +52,7 @@ public final class UUIDSql extends JavaPlugin {
                             dbCon = DriverManager.getConnection(dbInformation[0], dbInformation[1], dbInformation[2]);
                             createTables(dbCon, this);
                         } catch (SQLException e){
-                            this.getLogger().warning("An error occured while connecting to the db, please change the config file."+e.getMessage());
+                            this.getLogger().severe("An error occured while connecting to the db, please change the config file."+e.getMessage());
                         }
 
 		}
@@ -101,10 +101,8 @@ public final class UUIDSql extends JavaPlugin {
 							dbCon.close();
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
-							this.getLogger()
-									.warning(
-											"[UUIDSql]An error occured while connecting to the db, please change the config file."
-													+ e.getMessage());
+							this.getLogger().warning("[UUIDSql]An error occured while connecting to the db, please change the config file.");
+							this.getLogger().severe("Cause: " + e.getMessage());
 						}
 
 					} else {
@@ -139,10 +137,9 @@ public final class UUIDSql extends JavaPlugin {
 							dbCon.close();
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
-							this.getLogger()
-									.warning(
-											"[UUIDSql]An error occured while connecting to the db, please change the config file."
-													+ e.getMessage());
+							this.getLogger().warning("[UUIDSql]An error occured while connecting to the db, please change the config file.");
+							this.getLogger().severe("Cause: " + e.getMessage());
+
 						}
 					} else {
 						sender.sendMessage("[UUIDSql]You must specify a name");
@@ -160,7 +157,90 @@ public final class UUIDSql extends JavaPlugin {
 
 					sender.sendMessage("[UUIDSql]Reloaded");
 
-				} else {
+				}
+				else if (args[0].equalsIgnoreCase("purge"))
+				{
+					Connection dbCon = null;
+					Statement stmt = null;
+
+					try {
+						String query = "TRUNCATE userUUID";
+						dbCon = DriverManager.getConnection(
+								dbInformation[0], dbInformation[1],
+								dbInformation[2]);
+
+						stmt = dbCon.prepareStatement(query);
+						stmt.executeUpdate(query);
+						
+						sender.sendMessage("[UUIDSql]dataBase is now empty !");
+						
+						dbCon.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						this.getLogger().warning("[UUIDSql]An error occured .");
+						this.getLogger().severe("Cause: " + e.getMessage());
+
+					}
+				}
+				else if (args[0].equalsIgnoreCase("removeUuid"))
+				{
+					if (args.length == 2)
+					{
+						Connection dbCon = null;
+						Statement stmt = null;
+
+						try {
+							String query = "DELETE FROM userUUID WHERE uuid = '"+args[1].toString()+"'";
+							dbCon = DriverManager.getConnection(
+									dbInformation[0], dbInformation[1],
+									dbInformation[2]);
+
+							stmt = dbCon.prepareStatement(query);
+							stmt.executeUpdate(query);
+							sender.sendMessage("[UUIDSql]Row deleted !");
+							dbCon.close();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							this.getLogger().warning("[UUIDSql]An error occured .");
+							this.getLogger().severe("Cause: " + e.getMessage());
+
+						}
+					}
+					else {
+						sender.sendMessage("[UUIDSql]You myst secify a uuid !");
+					}
+				}
+				else if (args[0].equalsIgnoreCase("removeName"))
+				{
+					if (args.length == 2)
+					{
+						Connection dbCon = null;
+						Statement stmt = null;
+
+						try {
+							String query = "DELETE FROM userUUID WHERE username = '"+args[1].toString()+"'";
+							dbCon = DriverManager.getConnection(
+									dbInformation[0], dbInformation[1],
+									dbInformation[2]);
+
+							stmt = dbCon.prepareStatement(query);
+							stmt.executeUpdate(query);
+							sender.sendMessage("[UUIDSql]Row deleted !");
+							dbCon.close();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							this.getLogger().warning("[UUIDSql]An error occured .");
+							this.getLogger().severe("Cause: " + e.getMessage());
+
+						}
+					}
+					else
+					{
+						sender.sendMessage("[UUIDSql]You myst specify a name !");
+					}
+					
+				}
+				else {
 					sender.sendMessage("[UUIDSql]There is a problem, this command doen't exist !");
 				}
 			} else {
@@ -168,6 +248,9 @@ public final class UUIDSql extends JavaPlugin {
 				sender.sendMessage("1. uuidsql reload");
 				sender.sendMessage("2. uuidsql getName <uuid>");
 				sender.sendMessage("3. uuidsql getUuid <name>");
+				sender.sendMessage("4. uuidsql purge");
+				sender.sendMessage("5. uuidsql removeUuid <uuid>");
+				sender.sendMessage("6. uuidsql removeName <name>");
 			}
 
 		}
@@ -184,7 +267,7 @@ public final class UUIDSql extends JavaPlugin {
                                                 "`uuid` text NOT NULL,"+
                                                 "`username` text NOT NULL,"+
                                                 "PRIMARY KEY (`id`)"+
-                                                ") ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;");
+                                                ") ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;");
 			plugin.getLogger().info("[UUIDSql] MySQL table has been created");
 		} catch (SQLException e) {
 			plugin.getLogger().severe("[UUIDSql]An error occured while creating MySQL table, please change the config file");
