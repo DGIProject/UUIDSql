@@ -55,21 +55,22 @@ public class PlayerListener implements Listener {
 							int count2 = rs.getInt(1);
 							if (count2 == 0)
 							{
-								query = "UPDATE userUUID SET uuid = '"+player.getUniqueId()+"' WHERE username = '"+player.getName().toString()+"'";				
+								query = "UPDATE userUUID SET old_uuid = uuid, uuid = '"+player.getUniqueId()+"' WHERE username = '"+player.getName().toString()+"'";				
 								stmt = dbCon.prepareStatement(query);
 								stmt.executeUpdate(query);	
+								plugin.getLogger().info("Updating record for user "+player.getName()+" with UUID "+player.getUniqueId());
 							}							
 						}
 						
 						
-						plugin.getLogger().info("Updating record for user "+player.getName()+" with UUID "+player.getUniqueId());
 						
 					}
 				}
 				dbCon.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				plugin.getLogger().warning("an error occured while connecting to the db, please change the config file."+e.getMessage());
+				plugin.getLogger().warning("An error occured ");
+				plugin.getLogger().severe("Cause : "+e.getMessage());
 			}
         	
         	

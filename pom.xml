@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fr.ringotter</groupId>
   <artifactId>UUIDSQL</artifactId>
-  <version>0.2.6</version>
+  <version>0.2.7</version>
   <name>UUIDtoSQL</name>
   <description></description>
   <build>
