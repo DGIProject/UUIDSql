@@ -3,6 +3,7 @@ package fr.dgiproject;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -342,32 +343,126 @@ public final class UUIDSql extends JavaPlugin {
 				}
 				else if (args[0].equalsIgnoreCase("removeName"))
 				{
-					if (args.length == 2)
+					if (args.length >= 2)
 					{
-						
-						Connection dbCon = null;
-						Statement stmt = null;
+						if (args.length == 3)
+						{
+							
+							if (args[2].equalsIgnoreCase("1"))
+							{
+								Connection dbCon = null;
+								Statement stmt = null;
 
-						try {
-							String query = "DELETE FROM userUUID WHERE username = '"+args[1].toString()+"'";
-							dbCon = DriverManager.getConnection(
-									dbInformation[0], dbInformation[1],
-									dbInformation[2]);
+								try {
+									String query = "DELETE FROM userUUID WHERE username = '"+args[1].toString()+"'";
+									dbCon = DriverManager.getConnection(
+											dbInformation[0], dbInformation[1],
+											dbInformation[2]);
 
-							stmt = dbCon.prepareStatement(query);
-							stmt.executeUpdate(query);
-							sender.sendMessage("[UUIDSql]Row deleted !");
-							dbCon.close();
-						} catch (SQLException e) {
-							// TODO Auto-generated catch block
-							this.getLogger().warning("[UUIDSql]An error occured .");
-							this.getLogger().severe("Cause: " + e.getMessage());
+									stmt = dbCon.prepareStatement(query);
+									stmt.executeUpdate(query);
+									sender.sendMessage("[UUIDSql]Row deleted !");
+									dbCon.close();
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									this.getLogger().warning("[UUIDSql]An error occured .");
+									this.getLogger().severe("Cause: " + e.getMessage());
+
+								}
+							}
+							else if(args[2].equalsIgnoreCase("2"))
+							{
+								String uuidFound = "";
+								try {
+
+									String query = "SELECT uuid FROM userUUID WHERE username = '"
+											+ args[1].toString() + "' ";
+									Connection dbCon = DriverManager.getConnection(
+											dbInformation[0], dbInformation[1],
+											dbInformation[2]);
+
+									PreparedStatement stmt = dbCon.prepareStatement(query);
+									ResultSet rs = stmt.executeQuery(query);
+									while (rs.next()) {
+										uuidFound = rs.getString(0);
+									}
+									dbCon.close();
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									this.getLogger().warning("[UUIDSql]An error occured");
+									this.getLogger().severe("Cause: " + e.getMessage());
+								}
+								File f = new File("world"+File.separator+"playerdata"+File.separator+uuidFound+".dat");
+								if (f.delete())
+									{
+										sender.sendMessage("[UUIDSql] File for "+args[1].toString()+" has been deleted");
+									}
+								else {
+									sender.sendMessage("[UUIDSql] An error occured");
+								}
+							}
+							else if (args[2].equalsIgnoreCase("3")) // Tabe & userlib
+							{
+								String uuidFound = "";
+								try {
+
+									String query = "SELECT uuid FROM userUUID WHERE username = '"
+											+ args[1].toString() + "' ";
+									Connection dbCon = DriverManager.getConnection(
+											dbInformation[0], dbInformation[1],
+											dbInformation[2]);
+
+									PreparedStatement stmt = dbCon.prepareStatement(query);
+									ResultSet rs = stmt.executeQuery(query);
+									while (rs.next()) {
+										uuidFound = rs.getString(1);
+									}
+									dbCon.close();
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									this.getLogger().warning("[UUIDSql]An error occured");
+									this.getLogger().severe("Cause: " + e.getMessage());
+								}
+								File f = new File("world"+File.separator+"playerdata"+File.separator+uuidFound+".dat");
+								if (f.delete())
+									{
+										sender.sendMessage("[UUIDSql] File for "+args[1].toString()+" has been deleted");
+										
+										try {
+											String query = "DELETE FROM userUUID WHERE username = '"+args[1].toString()+"'";
+											Connection dbCon = DriverManager.getConnection(
+													dbInformation[0], dbInformation[1],
+													dbInformation[2]);
+
+											PreparedStatement stmt = dbCon.prepareStatement(query);
+											stmt.executeUpdate(query);
+											sender.sendMessage("[UUIDSql]Row deleted !");
+											dbCon.close();
+										} catch (SQLException e) {
+											// TODO Auto-generated catch block
+											this.getLogger().warning("[UUIDSql]An error occured .");
+											this.getLogger().severe("Cause: " + e.getMessage());
+
+										}
+									}
+								else {
+									sender.sendMessage("[UUIDSql] An error occured");
+								}
+							}
+							
+						}					
+						else {
+							sender.sendMessage("[UUIDSql] What do you wan't to remove for "+args[1].toString()+" ?");
+							sender.sendMessage("[UUIDSql] 1. Table");
+							sender.sendMessage("[UUIDSql] 2. User Library");
+							sender.sendMessage("[UUIDSql] 3. Table & User Library");
+							sender.sendMessage("[UUIDSql] To perform the action, type : /uuidsql removename "+args[1].toString()+" <1,2,3>");
 
 						}
+						
 					}
-					else
-					{
-						sender.sendMessage("[UUIDSql]You myst specify a name !");
+					else {
+						sender.sendMessage("[UUIDSql]You myst secify a username !");
 					}
 					
 				}
