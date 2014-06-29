@@ -396,10 +396,10 @@ public final class UUIDSql extends JavaPlugin {
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS `userUUID` ("+
                                                 "`id` int(11) NOT NULL AUTO_INCREMENT,"+
                                                 "`uuid` text NOT NULL,"+
-                                                "`old_uuid` text NOT NULL,"+
+                                                "`old_uuid` text ,"+
                                                 "`username` text NOT NULL,"+
                                                 "PRIMARY KEY (`id`)"+
-                                                ") ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;");
+                                                ");");
 			plugin.getLogger().info("[UUIDSql] MySQL table has been created");
 		} catch (SQLException e) {
 			plugin.getLogger().severe("[UUIDSql]An error occured while creating MySQL table, please change the config file");
