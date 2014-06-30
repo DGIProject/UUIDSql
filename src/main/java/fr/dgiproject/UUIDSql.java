@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -58,6 +59,8 @@ public final class UUIDSql extends JavaPlugin {
 		}
 
 		pm.registerEvents(playerListener, this);
+		pm.addPermission(new Permission("uuidsql.remove"));
+		pm.addPermission(new Permission("uuidsql.reload"));
 		getLogger().info("[UUIDSql] Loaded !");
 
 	}
@@ -144,7 +147,7 @@ public final class UUIDSql extends JavaPlugin {
 					} else {
 						sender.sendMessage("[UUIDSql]You must specify a name");
 					}
-				} else if (args[0].equalsIgnoreCase("reload")) {
+				} else if (args[0].equalsIgnoreCase("reload") && sender.hasPermission(new Permission("uuidsql.reload"))) {
 
 					String dbURL = this.getConfig().getString("host")
 							+ this.getConfig().getString("dbName");
@@ -158,7 +161,7 @@ public final class UUIDSql extends JavaPlugin {
 					sender.sendMessage("[UUIDSql]Reloaded");
 
 				}
-				else if (args[0].equalsIgnoreCase("purge"))
+				else if (args[0].equalsIgnoreCase("purge") && sender.hasPermission(new Permission("uuidsql.remove")))
 				{
 					if (args.length == 2)
 					{
@@ -255,7 +258,7 @@ public final class UUIDSql extends JavaPlugin {
 					}
 					
 				}
-				else if (args[0].equalsIgnoreCase("removeUuid"))
+				else if (args[0].equalsIgnoreCase("removeUuid") && sender.hasPermission(new Permission("uuidsql.remove")))
 				{
 					if (args.length >= 2)
 					{
@@ -341,7 +344,7 @@ public final class UUIDSql extends JavaPlugin {
 						sender.sendMessage("[UUIDSql]You myst secify a uuid !");
 					}
 				}
-				else if (args[0].equalsIgnoreCase("removeName"))
+				else if (args[0].equalsIgnoreCase("removeName") && sender.hasPermission(new Permission("uuidsql.remove")))
 				{
 					if (args.length >= 2)
 					{
@@ -467,7 +470,7 @@ public final class UUIDSql extends JavaPlugin {
 					
 				}
 				else {
-					sender.sendMessage("[UUIDSql]There is a problem, this command doen't exist !");
+					sender.sendMessage("[UUIDSql]This command does not exist or you didn't have the permission to perform it");
 				}
 			} else {
 				sender.sendMessage("Availbale commands");
